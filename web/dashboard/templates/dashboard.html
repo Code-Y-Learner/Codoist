@@ -1,0 +1,196 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% include "header.html" %}
+{% include "sidebar.html" %}
+<!--Main contents-->
+<div id="layoutSidenav_content">
+    <main>
+        {% if current_user.code: %}
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">Codoist</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item active">Todolists</li>
+            </ol>
+            <h3 class="card-sub-heading">Todolist - deadline</h3>
+            <div class="row">
+                {% for todolist in current_user.todo|sort(attribute='deadline') %}
+                {% if todolist.deadline != '' %}
+                <div class="col-xl-{{length_deadline[0]}} col-md-{{length_deadline[1]}}">
+                    {% if todolist.complete == 'O' %}
+                    <div class="card bg-primary text-white mb-4">
+                        {% elif todolist.complete == 'X' %}
+                        <div class="card bg-danger text-white mb-4">
+                            {% else %}
+                            <div class="card bg-warning text-white mb-4">
+                                {% endif %}
+                                <div class="card-body d-flex justify-content-between">
+                                    {{ todolist.title }}
+                                    <h4><a class="text-black text-decoration-none text-lg"
+                                           href="{{ url_for('delete_todolist', todolist_id = todolist.id ) }}"><i
+                                            class="fa-solid fa-circle-xmark"></i></a></h4>
+                                </div>
+                                <div class="card-footer d-flex align-items-center justify-content-between">
+                                    <div class="dropend">
+                                        <a class="dropdown-toggle text-white text-decoration-none"
+                                           data-bs-toggle="dropdown" aria-expanded="false">
+                                            {{todolist.deadline}}
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <form method="post" role="form">
+                                                {{ form_1.usercode(value = current_user.code ) }}
+                                                {{ form_1.title(value = todolist.title ) }}
+                                                {{ form_1.hidden_tag() }}
+                                                {{ wtf.form_errors(form_1, hiddens="only") }}
+                                                <li><a class="dropdown-item">{{ form_1.deadline(class='datepicker')
+                                                    }}</a></li>
+                                                <li><a class="dropdown-item">{{ wtf.form_field(form_1.submit2) }}</a>
+                                                </li>
+                                                <li>
+                                                    <hr class="dropdown-divider"/>
+                                                </li>
+                                                <li><a class="dropdown-item">{{ wtf.form_field(form_1.daily) }}</a></li>
+                                            </form>
+                                        </ul>
+                                    </div>
+                                    <div class="small text-white">|</div>
+                                    <div class="dropend">
+                                        <a class="dropdown-toggle text-white text-decoration-none"
+                                           data-bs-toggle="dropdown" aria-expanded="false">
+                                            {{todolist.complete}}
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <form method="post" role="form">
+                                                {{ form_2.usercode(value = current_user.code ) }}
+                                                {{ form_2.title(value = todolist.title ) }}
+                                                {{ form_2.hidden_tag() }}
+                                                {{ wtf.form_errors(form_2, hiddens="only") }}
+                                                <li><a class="dropdown-item">{{ wtf.form_field(form_2.complete1) }}</a>
+                                                </li>
+                                                <li><a class="dropdown-item">{{ wtf.form_field(form_2.complete2) }}</a>
+                                                </li>
+                                                <li><a class="dropdown-item">{{ wtf.form_field(form_2.complete3) }}</a>
+                                                </li>
+                                            </form>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        <div class="col-xl-{{length_daily[0]}} col-md-{{length_daily[1]}}">
+                            {% if progress[0] != 0 %}
+                            <h3 class="text-danger fw-bold text-center">기한을 넘기거나 임박한<br>일정{{progress[0]}}개 있습니다. </h3>
+                            {% endif %}
+                            <h4 class="align-content-center text-center">총 {{progress[1]}}% 완료하였습니다. </h4>
+                        </div>
+                    </div>
+
+                    <h3 class="card-sub-heading">Todolist- Daily Work</h3>
+                    <div class="row">
+                        {% for todolist in current_user.todo|sort(attribute='deadline') %}
+                        {% if todolist.deadline == '' %}
+                        <div class="col-xl-{{length_daily[0]}} col-md-{{length_daily[1]}}">
+                            {% if todolist.complete == 'O' %}
+                            <div class="card bg-primary text-white mb-4">
+                                {% elif todolist.complete == 'X' %}
+                                <div class="card bg-danger text-white mb-4">
+                                    {% else %}
+                                    <div class="card bg-warning text-white mb-4">
+                                        {% endif %}
+                                        <div class="card-body d-flex justify-content-between">
+                                            {{ todolist.title }}
+                                            <h4><a class="text-black text-decoration-none text-lg"
+                                                   href="{{ url_for('delete_todolist', todolist_id = todolist.id ) }}"><i
+                                                    class="fa-solid fa-circle-xmark"></i></a></h4>
+                                        </div>
+                                        <div class="card-footer d-flex align-items-center justify-content-between">
+                                            <div class="dropend">
+                                                <a class="dropdown-toggle text-white text-decoration-none"
+                                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Daily Works
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    <form method="post" role="form">
+                                                        {{ form_1.usercode(value = current_user.code ) }}
+                                                        {{ form_1.title(value = todolist.title ) }}
+                                                        {{ form_1.hidden_tag() }}
+                                                        {{ wtf.form_errors(form_1, hiddens="only") }}
+                                                        <li><a class="dropdown-item">{{
+                                                            form_1.deadline(class='datepicker') }}</a></li>
+                                                        <li><a class="dropdown-item">{{ wtf.form_field(form_1.submit2)
+                                                            }}</a></li>
+                                                        <li>
+                                                            <hr class="dropdown-divider"/>
+                                                        </li>
+                                                        <li><a class="dropdown-item">{{ wtf.form_field(form_1.daily)
+                                                            }}</a></li>
+                                                    </form>
+                                                </ul>
+                                            </div>
+                                            <div class="small text-white">|</div>
+                                            <div class="dropend">
+                                                <a class="dropdown-toggle text-white text-decoration-none"
+                                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                                    {{todolist.complete}}
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    <form method="post" role="form">
+                                                        {{ form_2.usercode(value = current_user.code ) }}
+                                                        {{ form_2.title(value = todolist.title ) }}
+                                                        {{ form_2.hidden_tag() }}
+                                                        {{ wtf.form_errors(form_2, hiddens="only") }}
+                                                        <li><a class="dropdown-item">{{ wtf.form_field(form_2.complete1)
+                                                            }}</a></li>
+                                                        <li><a class="dropdown-item">{{ wtf.form_field(form_2.complete2)
+                                                            }}</a></li>
+                                                        <li><a class="dropdown-item">{{ wtf.form_field(form_2.complete3)
+                                                            }}</a></li>
+                                                    </form>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                                <div class="col-xl-{{length_daily[0]}} col-md-{{length_daily[1]}} align-middle">
+                                    <h3 class="text-center"> 매일 일정을 {{progress[2]}}% <br> 완료하였습니다. </h3>
+                                </div>
+                            </div>
+                            <div class="container-fluid" id="card-add">
+                                <div class="col-xl-6">
+                                    <div class="card mb-2 shadow-lg border-0 rounded-lg">
+                                        <div class="card-header"><h4 class="text-center font-weight-light my-4">
+                                            Add_Todolist</h4></div>
+                                        <div class="card-body">
+                                            <form method="post" role="form">
+                                                {{ form_3.hidden_tag() }}
+                                                {{ wtf.form_errors(form_3, hiddens="only") }}
+                                                <div class="form-floating mb-6">
+                                                    {{ wtf.form_field(form_3.title) }}
+                                                </div>
+                                                <div class="form-floating row">
+                                                    <div class="col mb-18">
+                                                        {{ wtf.form_field(form_3.complete) }}
+                                                    </div>
+                                                    <div class="col mb-18">
+                                                        {{ wtf.form_field(form_3.deadline) }}
+                                                    </div>
+                                                        <a class="btn btn-outline-secondary btn-block col mb-18 add-submit-button">
+                                                            {{ wtf.form_field(form_3.submit3) }}
+                                                        </a>
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% endif %}
+
+
+                            {% if not current_user.code %}
+                            {{ url_for('home') }}
+                            {% endif %}
+                            {% include "footer.html" %}

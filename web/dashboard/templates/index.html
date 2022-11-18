@@ -1,0 +1,47 @@
+{% include "header.html" %}
+{% if current_user.code: %}
+{{url_for('dashboard')}}
+{% endif %}
+<body class="sb-nav-fixed">
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <!-- Navbar Brand-->
+    <a class="navbar-brand ps-3" href="{{ url_for('home') }}">Todo_list</a>
+    <!-- Navbar Search-->
+    <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+        <div class="input-group">
+            <li><a class="btn btn-dark" href="#!">기능</a></li>
+            <li><a class="btn btn-dark" href="{{ url_for('login') }}">로그인</a></li>
+        </div>
+    </form>
+    <!-- Navbar-->
+    <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        <li class="nav-item dropdown">
+            <a href="{{url_for('register')}}">
+                <button type="button" class="btn btn-secondary download-button">무료로 시작하세요</button>
+            </a>
+
+        </li>
+    </ul>
+</nav>
+<!--Main contents-->
+
+
+<div class="container text-center" id="heading">
+    <div class="row justify-content-md-center">
+        <div class="col-xl-4">
+            <h1 class="big-heading">Codoist와 함께 일정을 관리하세요</h1>
+            <h3 class="sub-heading">Codoist는 타이머와 일정관리를 <br>수행할 수 있는 앱입니다.</h3>
+        </div>
+    </div>
+    <a href="{{url_for('register')}}">
+        <button type="button" class="btn btn-secondary btn-lg download-button">무료로 시작하세요</button>
+    </a>
+</div>
+<div class="container text-center">
+    <div class="row justify-content-md-center">
+
+
+    </div>
+</div>
+
+{% include "footer.html" %}
