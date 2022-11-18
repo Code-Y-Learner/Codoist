@@ -13,14 +13,14 @@ from flask_wtf import FlaskForm, CSRFProtect
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '77mZwMVO%S1RM6c9'
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 Bootstrap(app)
 # enable CSRF protection
 app.config['CKEDITOR_ENABLE_CSRF'] = True
 csrf = CSRFProtect(app)
 
 ##CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///user_db.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -362,7 +362,7 @@ def register():
             method='pbkdf2:sha256',
             salt_length=8
         )
-        user_code = "W6}5h2D"  # generate_usercode()
+        user_code =  generate_usercode()
         new_user = User(
             email=form.email.data,
             name=form.name.data,
@@ -416,4 +416,4 @@ def ai():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run()
