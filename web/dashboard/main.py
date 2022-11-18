@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, url_for, flash, abort, reque
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 import datetime
-import string, random, sys
+import string, random, sys, os
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
