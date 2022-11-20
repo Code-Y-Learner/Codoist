@@ -3,26 +3,27 @@
 {{url_for('dashboard')}}
 {% endif %}
 <body class="sb-nav-fixed">
-<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
     <!-- Navbar Brand-->
     <a class="navbar-brand ps-3" href="{{ url_for('home') }}">Todo_list</a>
-    <!-- Navbar Search-->
-    <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-        <div class="input-group">
-            <li><a class="btn btn-dark" href="#!">기능</a></li>
-            <li><a class="btn btn-dark" href="{{ url_for('login') }}">로그인</a></li>
-        </div>
-    </form>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
     <!-- Navbar-->
-    <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-        <li class="nav-item dropdown">
-            <a href="{{url_for('register')}}">
-                <button type="button" class="btn btn-secondary download-button">무료로 시작하세요</button>
-            </a>
-
-        </li>
-    </ul>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto ms-auto me-0 me-md-3 my-2 my-md-0">
+            <li class="d-none d-md-inline-block nav-item ">
+                <li class="nav-item" ><a class="btn btn-dark" href="#!">기능</a></li>
+                <li class="nav-item" ><a class="btn btn-dark" href="{{ url_for('login') }}">로그인</a></li>
+                <li class="nav-item" ><a href="{{url_for('register')}}"><button type="button" class="btn btn-secondary download-button">무료로 시작하세요</button></a></li>
+            </li>
+        </ul>
+    </div>
+  </div>
 </nav>
+
+
 <!--Main contents-->
 
 
@@ -39,8 +40,42 @@
 </div>
 <div class="container text-center">
     <div class="row justify-content-md-center">
-
-
+        <img src="https://elliethe.sirv.com/Images/Codoist.JPG" width="1225" height="712" alt="" />
+    </div>
+</div>
+<div class="container text-left py-5">
+    <div class="row justify-content-md-center my-5">
+        <div class="col-lg-6">
+            <ul class="align-middle">
+                <h3 class="fw-bold pt-5">일정을 추가하세요</h3>
+                <h3 class="fw-bold">GUI, 웹에서 일정을 확인<br></h3>
+                <h3 class="fw-bold">더 많은 일정을 달성하세요</h3>
+                <p>당신의 일정은 GUI에서도 웹에서도 추가가 가능하며 서로 연동됩니다. 당신의 할일을 추가하고 관리하세요</p>
+            </ul>
+            <div class="text-center pt-5">
+                <a href="{{url_for('register')}}"><button type="button" class="btn btn-lg btn-secondary download-button">GUI-다운로드</button></a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <img src="https://elliethe.sirv.com/Images/Todolist.JPG" width="580" height="350" alt="Codolist-image" />
+        </div>
+    </div>
+</div>
+<div class="container text-left pt-5">
+    <div class="row justify-content-md-center my-5">
+        <div class="col-lg-6 text-center">
+            <img src="https://elliethe.sirv.com/Images/Pomodoro_timer.JPG" width="450" height="350" alt="" />
+        </div>
+        <div class="col-lg-6">
+            <ul class="align-middle">
+                <h3 class="fw-bold pt-5">일정을 타이머를 통해 관리하세요.</h3>
+                <h3 class="fw-bold">포모도로 타이머 일정이 관리됩니다.<br></h3>
+                <p>당신의 일정을 타이머를 통해 관리하세요 타이머를 통한 데이터는 웹에서 살펴볼 수 있습니다.</p>
+            </ul>
+            <div class="text-center pt-5">
+                <a href="{{url_for('register')}}"><button type="button" class="btn btn-lg btn-secondary download-button">GUI-다운로드</button></a>
+            </div>
+        </div>
     </div>
 </div>
 

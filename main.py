@@ -13,7 +13,7 @@ from flask_wtf import FlaskForm, CSRFProtect
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY","123141QWEASD$!~@#21")
 Bootstrap(app)
 # enable CSRF protection
 app.config['CKEDITOR_ENABLE_CSRF'] = True
@@ -409,8 +409,6 @@ def logout():
 def ai():
     my_id = "Code-Y-Learner"
     my_project = "First_project"
-    # user_id = "stabilityai"
-    # user_project = "stable-diffusion"
     url_src = f"https://hf.space/embed/{my_id}/{my_project}/+"
     return render_template("ai.html",src=url_src)
 
