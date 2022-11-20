@@ -184,7 +184,7 @@ def dashboard():
             if todolist.deadline != '':
                 if todolist.complete != 'O':
                     count_notdone_deadline += 1
-                if datetime.datetime.strptime(todolist.deadline, '%Y/%m/%d') < datetime.datetime.today():
+                if datetime.datetime.strptime(todolist.deadline, '%Y/%m/%d') < datetime.datetime.today(datetime.timezone('Asia/Seoul')):
                     if todolist.complete != 'O':
                         deadline_over += 1
 
@@ -196,11 +196,11 @@ def dashboard():
                     count_notdone_daily += 1
                 count_daily += 1
             if count_daily == 0:
-                progress_daily = 0
+                progress_daily = -1
             else:
                 progress_daily = round((count_daily-count_notdone_daily)*100/count_daily,1)
             if count_deadline ==0:
-                progress_deadline = 0
+                progress_deadline = -1
             else:
                 progress_deadline = round((count_deadline-count_notdone_deadline)*100/count_deadline,1)
         return [ deadline_over, progress_deadline , progress_daily ]
