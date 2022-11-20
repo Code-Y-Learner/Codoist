@@ -10,7 +10,7 @@ from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from forms import LoginForm, RegisterForm, ModifyCompleteForm, ModifyDeadlineForm, AddForm, DateForm
 from flask_wtf import FlaskForm, CSRFProtect
-
+from pytz import timezone, UTC
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY","123141QWEASD$!~@#21")
@@ -184,7 +184,7 @@ def dashboard():
             if todolist.deadline != '':
                 if todolist.complete != 'O':
                     count_notdone_deadline += 1
-                if datetime.datetime.strptime(todolist.deadline, '%Y/%m/%d') < datetime.datetime.today(datetime.timezone('Asia/Seoul')):
+                if datetime.datetime.strptime(todolist.deadline, '%Y/%m/%d').astimezone(timezone('Asia/Seoul')) < datetime.datetime.today().astimezone(timezone('Asia/Seoul')):
                     if todolist.complete != 'O':
                         deadline_over += 1
 
@@ -414,4 +414,5 @@ def ai():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port="8000")
+    #app.run(host="0.0.0.0",port="8000")
+    app.run(debug=True)

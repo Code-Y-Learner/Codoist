@@ -80,7 +80,8 @@
                         <div class="col-xl-{{length_daily[0]}} col-md-{{length_daily[1]}}">
                             {% if progress[0] != 0 %}
                             <h4 class="text-danger fw-bold text-center">기한을 넘기거나 임박한<br>일정{{progress[0]}}개 있습니다. </h4>
-                            {% elif progress[1] != -1 %}
+                            {% endif %}
+                            {% if progress[1] != -1 %}
                             <h4 class="align-content-center text-center">총 {{progress[1]}}% 완료하였습니다. </h4>
                             {% endif %}
                         </div>
