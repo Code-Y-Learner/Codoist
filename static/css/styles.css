@@ -639,6 +639,9 @@ progress {
   margin-right: auto;
   margin-left: auto;
 }
+.container-canvas{
+  width: 70% !important;
+}
 
 @media (min-width: 576px) {
   .container-sm, .container {
@@ -11725,4 +11728,26 @@ body {
 }
 #card-add{
   padding: 3% 0% 0%;
+}
+
+.work-button{
+  background-color: #4e73df;
+  border: none;
+  color: white;
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.break-button{
+  background-color: #1cc88a;
+  border: none;
+  color: white;
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 17px;
+  font-weight: bold;
 }

@@ -29,6 +29,8 @@ class LoginForm(FlaskForm):
 
 class DateForm(FlaskForm):
     date = DateField('')
+    all_periods = SubmitField('All_periods')
+    submit = SubmitField("OK")
 
 class ModifyDeadlineForm(FlaskForm):
     usercode = HiddenField(validators=[DataRequired()])

@@ -1,0 +1,108 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% include "header.html" %}
+{% include "sidebar.html" %}
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid px-4">
+            <!-- Todolists        -->
+            <div class="row">
+                {% if current_user.todo %}
+                {% for todolist in current_user.todo %}
+                <div class="col-xl-2 col-md-6 mt-5">
+                    {% if todolist.title == title %}
+                    {% set bg = 'primary' %}
+                    {% else %}
+                    {% set bg = 'secondary' %}
+                    {% endif %}
+                    <div class="card bg-{{bg}} text-white mb-4">
+                        <div class="card-body d-flex justify-content-between">
+                            <h5><a class="fw-bold text-decoration-none text-white"
+                                   href="{{ url_for('pomodoro_dashboard', todolist_id =todolist.id, usercode = current_user.code) }}">{{
+                                todolist.title }}</a></h5>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+                            <button class="btn btn-{{bg}} dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">{{date}}
+                            </button>
+                            <ul class="dropdown-menu">
+                                <form method="post" role="form">
+                                    {{ date_form.hidden_tag() }}
+                                    {{ wtf.form_errors(date_form, hiddens="only") }}
+                                    <li><a class="dropdown-item">{{ date_form.date(class='datepicker') }}</a>
+                                    </li>
+                                    <li><a class="dropdown-item">{{ wtf.form_field(date_form.submit) }}</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider"/>
+                                    </li>
+                                    <li><a class="dropdown-item">{{ wtf.form_field(date_form.all_periods) }}</a>
+                                    </li>
+                                </form>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+
+            {% if (date != 'All periods') and (timer_dict) %}
+            <script type="text/javascript">
+                var timer_data = {{ timer_dict | tojson}}
+            </script>
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-chart-pie me-1"></i>
+                        {% if title %}
+                        {{title}}
+                        {% else %}
+                        {{current_user.name}}
+                        {% endif %}
+                    </div>
+                    <div class="container-canvas d-flex justify-content-between">
+                        <canvas id="myPieChart"></canvas>
+                        <div class="card-body bg-{{bg}} text-black">
+                            <h6 class="work-button">Total_worktime : {{total_work[date]}}분</h6>
+                            <h6 class="break-button">Total_breaktime : {{total_break[date]}}분</h6>
+                        </div>
+                    </div>
+                    <div class="card-footer small text-muted">Updated</div>
+                </div>
+            </div>
+            {% elif date == 'All periods' and timer_dict %}
+            <script type="text/javascript">
+                var totalWork = {{ total_work | tojson}}
+                var totalBreak = {{ total_break | tojson}}
+            </script>
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-chart-pie me-1"></i>
+                        {% if title %}
+                        {{title}}
+                        {% else %}
+                        {{current_user.name}}
+                        {% endif %}
+                    </div>
+                    <div class="container-canvas d-flex justify-content-between">
+                        <canvas id="myBarChart"></canvas>
+                        <div class="card-body bg-{{bg}} text-black">
+                            <h6 class="work-button">Total_worktime : {{total_work.values()|sum}}분</h6>
+                            <h6 class="break-button">Total_breaktime : {{total_break.values()|sum}}분</h6>
+                        </div>
+                    </div>
+                    <div class="card-footer small text-muted">Updated</div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2><a href="">No data {{date}}</a></h2>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+
+            {% include "footer.html" %}

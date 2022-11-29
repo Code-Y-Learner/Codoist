@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, abort, request, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, abort, request, jsonify, send_from_directory
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 import datetime
@@ -88,14 +88,7 @@ def home():
         return redirect(url_for('dashboard'))
     return render_template("index.html", current_user=current_user)
 
-# @app.route('/pomodoro/', methods=["GET", "POST"])
-# @login_required
-# def pomodoro():
-#     standard_date = datetime.today()
-#     form_date = DateForm()
-#
-#     if form_date.validate_on_submit():
-#     return render_template('pomodoro.html',current_user = current_user)
+
 
 
 @app.route('/dashboard/', methods=["GET", "POST"])
@@ -106,7 +99,6 @@ def dashboard():
     form_add = AddForm()
     if form_complete.validate_on_submit():
         if (form_complete.complete1.data or form_complete.complete2.data or form_complete.complete3.data):
-            print('form1')
             for i in range(1, 4):
                 if getattr(form_complete, f"complete{i}").data:
                     title = form_complete.title.data
@@ -117,9 +109,7 @@ def dashboard():
                     todolist_to_modify.complete = complete
                     db.session.commit()
         if (form_deadline.submit2.data or form_deadline.daily.data):
-            print('form2')
             if form_deadline.daily.data:
-                print(form_deadline.daily.data)
                 title = form_complete.title.data
                 user_code = form_complete.usercode.data
                 todolist_to_modify = TodoList.query.filter_by(title=title, author=User.query.filter_by(
@@ -211,6 +201,108 @@ def dashboard():
     return render_template("dashboard.html", current_user=current_user, form_1=form_deadline, form_2=form_complete,
                            form_3=form_add, length_daily = cardlength_daily, length_deadline = cardlength_deadline, progress = progress )
 
+@app.route("/pomodoro/<usercode>/<int:todolist_id>", methods=["GET","POST"])
+@login_required
+def pomodoro_dashboard(usercode,todolist_id):
+
+    date_form = DateForm()
+    date = datetime.datetime.today().astimezone(timezone('Asia/Seoul')).strftime('%Y-%m-%d')
+    if date_form.submit.data or date_form.all_periods.data:
+        if date_form.all_periods.data:
+            date='All periods'
+        elif date_form.submit.data:
+            date = date_form.date.data.strftime('%Y-%m-%d')
+
+    if todolist_id:
+        timer_list = Timer.query.filter_by(todolist_id=todolist_id,
+                                 usercode=User.query.filter_by(code=usercode).first())
+        title = TodoList.query.filter_by(id=todolist_id).first().title
+    else:
+        timer_list = Timer.query.filter_by(usercode=User.query.filter_by(code=usercode).first())
+
+    pomo_dict = {}
+    t_past = 2
+    t_dates =[]
+    t_list = []
+    if timer_list:
+        for timer in timer_list:
+            if date == 'All periods':
+                t_times = len(t_list)
+                if timer.status == 'start':
+                    if t_past == 1:
+                        t_dates.pop()
+                    elif t_past == 0:
+                        t_list.append(t_work + t_break)
+                        t_times = len(t_list)
+                    t_past = 1
+                    t_dates.append(timer.time.strftime('%Y-%m-%d'))
+                    first_timer = timer.time
+                    t_work = 0
+                    t_break = 0
+                    pomo_dict[f"start_{t_times}"] = first_timer
+                elif timer.status == 'work-end':
+                    t_past = 0
+                    pomo_dict[f"workend_{t_times}_{t_work}"] = timer.time
+                    t_work += 1
+                elif timer.status == "break-end":
+                    pomo_dict[f"breakend_{t_times}_{t_break}"] = timer.time
+                    t_break += 1
+                elif timer.status == "reset":
+                    t_past = 2
+                    t_dates.pop()
+            elif timer.time.strftime('%Y-%m-%d') == date:
+                t_times = len(t_list)
+                if timer.status == 'start':
+                    first_timer = timer.time
+                    t_dates.append(timer.time.strftime('%Y-%m-%d'))
+                    t_work = 0
+                    t_break = 0
+                    pomo_dict[f"start_{t_times}"] = first_timer
+                elif timer.status == 'work-end':
+                    pomo_dict[f"workend_{t_times}_{t_work}"] = timer.time
+                    t_work += 1
+                elif timer.status == "break-end":
+                    pomo_dict[f"breakend_{t_times}_{t_break}"] = timer.time
+                    t_break += 1
+
+
+        if t_past ==2 or t_past ==0:
+            try:
+                t_list.append(t_work+t_break)
+            except:
+                pass
+        pomodoro_dict = {}
+        t_worktime = {}
+        t_breaktime = {}
+        t_times = len(t_list)
+        for k in range(t_times):
+            work_time = []
+            break_time = []
+            for i in range(t_list[k]):
+                if i == 0:
+                    pomodoro_dict[f"{k}_{i}"] = (pomo_dict[f'workend_{k}_0']-pomo_dict[f"start_{k}"]).total_seconds()
+                    work_time.append(pomodoro_dict[f"{k}_{i}"])
+                elif i % 2 !=0:
+                    pomodoro_dict[f"{k}_{i}"] = (pomo_dict[f"breakend_{k}_{int((i-1)/2)}"]-pomo_dict[f"workend_{k}_{int((i-1)/2)}"]).total_seconds()
+                    break_time.append(pomodoro_dict[f"{k}_{i}"])
+                else:
+                    pomodoro_dict[f"{k}_{i}"] = (pomo_dict[f"workend_{k}_{int(i/2)}"] - pomo_dict[f"breakend_{k}_{int(i/2-1)}"]).total_seconds()
+                    work_time.append(pomodoro_dict[f"{k}_{i}"])
+            try:
+                t_worktime[f"{t_dates[k]}"] = t_worktime[f"{t_dates[k]}"] + round(sum(work_time)//60)
+            except:
+                t_worktime[f"{t_dates[k]}"] = round(sum(work_time)//60)
+            try :
+                t_breaktime[f"{t_dates[k]}"] = t_breaktime[f"{t_dates[k]}"] + round(sum(break_time)//60)
+            except:
+                t_breaktime[f"{t_dates[k]}"] = round(sum(break_time)//60)
+
+        print(t_times,t_list,date, t_worktime, t_breaktime,t_dates)
+
+
+    return render_template("pomodoro.html", timer_dict =  pomodoro_dict,total_work=t_worktime, total_break = t_breaktime, title = title, current_user=current_user,
+                           date_form = date_form, date = date)
+
 
 @app.route("/delete/<int:todolist_id>")
 @login_required
@@ -219,6 +311,10 @@ def delete_todolist(todolist_id):
     db.session.delete(todolist_to_delete)
     db.session.commit()
     return redirect(url_for('dashboard'))
+
+@app.route('/download')
+def download_file():
+    return send_from_directory('static',filename="assets/app/pomodoro.zip")
 
 
 @app.route('/pomodoro/', methods=["GET", "POST"])
@@ -323,7 +419,7 @@ def load_data():
                 }
             return jsonify(data)
         else:
-            print("No data")
+            return jsonify(response={'Failed': "Unvalid usercode"})
 
 
 @app.route('/register', methods=["GET", "POST"])
@@ -414,5 +510,5 @@ def ai():
 
 
 if __name__ == "__main__":
-    #app.run(host="0.0.0.0",port="8000")
+    # app.run(host="0.0.0.0",port="8000")
     app.run(debug=True)
