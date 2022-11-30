@@ -275,29 +275,31 @@ def pomodoro_dashboard(usercode,todolist_id):
         t_worktime = {}
         t_breaktime = {}
         t_times = len(t_list)
-        for k in range(t_times):
-            work_time = []
-            break_time = []
-            for i in range(t_list[k]):
-                if i == 0:
-                    pomodoro_dict[f"{k}_{i}"] = (pomo_dict[f'workend_{k}_0']-pomo_dict[f"start_{k}"]).total_seconds()
-                    work_time.append(pomodoro_dict[f"{k}_{i}"])
-                elif i % 2 !=0:
-                    pomodoro_dict[f"{k}_{i}"] = (pomo_dict[f"breakend_{k}_{int((i-1)/2)}"]-pomo_dict[f"workend_{k}_{int((i-1)/2)}"]).total_seconds()
-                    break_time.append(pomodoro_dict[f"{k}_{i}"])
-                else:
-                    pomodoro_dict[f"{k}_{i}"] = (pomo_dict[f"workend_{k}_{int(i/2)}"] - pomo_dict[f"breakend_{k}_{int(i/2-1)}"]).total_seconds()
-                    work_time.append(pomodoro_dict[f"{k}_{i}"])
-            try:
-                t_worktime[f"{t_dates[k]}"] = t_worktime[f"{t_dates[k]}"] + round(sum(work_time)//60)
-            except:
-                t_worktime[f"{t_dates[k]}"] = round(sum(work_time)//60)
-            try :
-                t_breaktime[f"{t_dates[k]}"] = t_breaktime[f"{t_dates[k]}"] + round(sum(break_time)//60)
-            except:
-                t_breaktime[f"{t_dates[k]}"] = round(sum(break_time)//60)
+        try:
+            for k in range(t_times):
+                work_time = []
+                break_time = []
+                for i in range(t_list[k]):
+                    if i == 0:
+                        pomodoro_dict[f"{k}_{i}"] = (pomo_dict[f'workend_{k}_0']-pomo_dict[f"start_{k}"]).total_seconds()
+                        work_time.append(pomodoro_dict[f"{k}_{i}"])
+                    elif i % 2 !=0:
+                        pomodoro_dict[f"{k}_{i}"] = (pomo_dict[f"breakend_{k}_{int((i-1)/2)}"]-pomo_dict[f"workend_{k}_{int((i-1)/2)}"]).total_seconds()
+                        break_time.append(pomodoro_dict[f"{k}_{i}"])
+                    else:
+                        pomodoro_dict[f"{k}_{i}"] = (pomo_dict[f"workend_{k}_{int(i/2)}"] - pomo_dict[f"breakend_{k}_{int(i/2-1)}"]).total_seconds()
+                        work_time.append(pomodoro_dict[f"{k}_{i}"])
+                try:
+                    t_worktime[f"{t_dates[k]}"] = t_worktime[f"{t_dates[k]}"] + round(sum(work_time)//60)
+                except:
+                    t_worktime[f"{t_dates[k]}"] = round(sum(work_time)//60)
+                try :
+                    t_breaktime[f"{t_dates[k]}"] = t_breaktime[f"{t_dates[k]}"] + round(sum(break_time)//60)
+                except:
+                    t_breaktime[f"{t_dates[k]}"] = round(sum(break_time)//60)
+        except:
+            pass
 
-        print(t_times,t_list,date, t_worktime, t_breaktime,t_dates)
 
 
     return render_template("pomodoro.html", timer_dict =  pomodoro_dict,total_work=t_worktime, total_break = t_breaktime, title = title, current_user=current_user,
